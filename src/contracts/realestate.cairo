@@ -188,5 +188,49 @@ mod RealEstateFractionalOwnership {
             });
         }
         
+        fn add_property(
+            ref self: ContractState,
+            property_address: felt252,
+            property_description: felt252,
+            property_value: u256,
+            property_image_uri: felt252,
+            total_shares: u256,
+            share_price: u256,
+            initial_owner: ContractAddress,
+            property_manager: ContractAddress
+        ) {
+            // Only contract owner can add properties
+            self.src5.assert_only_owner();
+            
+            let property_id = self.property_count.read();
+            
+            // Create property details
+            let details = PropertyDetails {
+                property_id,
+                property_address,
+                property_description,
+                property_value,
+                property_image_uri,
+                total_shares,
+                share_price
+            };
+            
+            // Mint all shares to initial owner
+            self.erc1155.mint(initial_owner, property_id, total_shares, array![].span());
+            
+            // Store property details and manager
+            self.property_details.write(property_id, details);
+            self.property_managers.write(property_id, property_manager);
+            
+            // Increment property count
+            self.property_count.write(property_id + 1);
+            
+            // Emit event
+            self.emit(PropertyAdded {
+                property_id,
+                property_address,
+                total_shares
+            });
+        }
     }
 }
