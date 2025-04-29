@@ -141,6 +141,7 @@ mod RealEstateFractionalOwnership {
 
     #[external(v0)]
     impl RealEstateFractionalOwnershipImpl of IRealEstateFractionalOwnership<ContractState> {
+        
         fn create_proposal(
             ref self: ContractState, 
             property_id: u256,
@@ -187,6 +188,22 @@ mod RealEstateFractionalOwnership {
                 voting_end_time
             });
         }
+
+        fn purchase_property(ref self: ContractState, property_id: u256) {
+            assert(self.for_sale.read(property_id), 'Property not for sale');
+            
+            let details = self.property_details.read(property_id);
+            let sale_price = self.sale_price.read(property_id);
+            let caller = get_caller_address();
+            self.emit(PropertySold {
+            property_id,
+            buyer: caller,
+            sale_price
+            });
+            
+            // Mark property as no longer for sale
+            self.for_sale.write(property_id, false);
+            }
         
     }
 }
