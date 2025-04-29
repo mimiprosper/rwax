@@ -141,6 +141,52 @@ mod RealEstateFractionalOwnership {
 
     #[external(v0)]
     impl RealEstateFractionalOwnershipImpl of IRealEstateFractionalOwnership<ContractState> {
+        fn create_proposal(
+            ref self: ContractState, 
+            property_id: u256,
+            description: felt252, 
+            value: u256,
+            recipient: ContractAddress,
+            voting_period: u64
+        ) {
+            // Only property manager or significant shareholders can create proposals
+            let caller = get_caller_address();
+            let manager = self.property_managers.read(property_id);
+            let balance = self.erc1155.balance_of(caller, property_id);
+            let details = self.property_details.read(property_id);
+            
+            assert(
+                caller == manager || balance > details.total_shares / 10_u256,
+                'Not authorized to propose'
+            );
+            
+            let proposal_id = self.proposal_count.read();
+            let voting_end_time = get_block_timestamp() + voting_period;
+            
+            let proposal = Proposal {
+                property_id,
+                description,
+                value,
+                recipient,
+                voting_end_time,
+                executed: false,
+                votes_for: 0_u256,
+                votes_against: 0_u256
+            };
+            
+            // Store proposal
+            self.proposals.write(proposal_id, proposal);
+            self.proposal_count.write(proposal_id + 1);
+            
+            // Emit event
+            self.emit(ProposalCreated {
+                proposal_id,
+                property_id,
+                creator: caller,
+                description,
+                voting_end_time
+            });
+        }
         
     }
 }
