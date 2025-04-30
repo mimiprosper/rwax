@@ -1,4 +1,3 @@
-
 #[derive(Drop, Serde)]
 struct Propertydetails {
     property_id: u256,
