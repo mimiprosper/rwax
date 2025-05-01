@@ -269,6 +269,63 @@ mod RealEstateFractionalOwnership {
                 amount: distributable,
                 timestamp: get_block_timestamp()
             });
+      }
+
+        fn execute_proposal(ref self: ContractState, proposal_id: u256) {
+            let mut proposal = self.proposals.read(proposal_id);
+
+            // Check proposal hasn't been executed
+            assert(!proposal.executed, 'Already executed');
+
+            // Check voting period has ended
+            assert(get_block_timestamp() >= proposal.voting_end_time, 'Voting ongoing');
+
+            // Check threshold met
+            let total_votes = proposal.votes_for + proposal.votes_against;
+            let threshold = self.decision_threshold.read();
+            let percentage_for = (proposal.votes_for * 100_u256) / total_votes;
+            assert(percentage_for >= u256::from(threshold), 'Threshold not met');
+
+            // Mark as executed
+            proposal.executed = true;
+            self.proposals.write(proposal_id, proposal);
+
+            // In a real implementation, execute the proposal action here
+            // For now we just emit an event
+            self.emit(ProposalExecuted { proposal_id });
         }
-    }
+
+        fn cast_vote(ref self: ContractState, proposal_id: u256, support: bool) {
+            let caller = get_caller_address();
+            let mut proposal = self.proposals.read(proposal_id);
+
+            // Check voting period hasn't ended
+            assert(get_block_timestamp() < proposal.voting_end_time, 'Voting ended');
+
+            // Check voter has shares
+            let balance = self.erc1155.balance_of(caller, proposal.property_id);
+            assert(balance > 0, 'No shares to vote with');
+
+            // Update vote counts
+            if support {
+                proposal.votes_for += balance;
+            } else {
+                proposal.votes_against += balance;
+            }
+
+            // Save updated proposal
+            self.proposals.write(proposal_id, proposal);
+
+            // Emit event
+            self
+                .emit(
+                    VoteCast {
+                        proposal_id, voter: caller, supports: support, voting_power: balance,
+                    },
+                );
+        }
+
+        fn get_proposal_details(self: @ContractState, proposal_id: u256) -> Proposal {
+            self.proposals.read(proposal_id)
+        }
 }
