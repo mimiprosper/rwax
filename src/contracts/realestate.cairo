@@ -242,6 +242,35 @@ mod RealEstateFractionalOwnership {
             self.proposals.read(proposal_id);
         }
 
+        fn distribute_rental_income(ref self: ContractState, property_id: u256, amount: u256) {
+            // Only property manager can distribute income
+            let manager = self.property_managers.read(property_id);
+            assert(get_caller_address() == manager, 'Only property manager');
+            
+            let details = self.property_details.read(property_id);
+            let total_shares = details.total_shares;
+            
+            // Calculate management fee
+            let fee_percent = self.management_fee_percent.read();
+            let fee = amount * u256::from(fee_percent) / 100_u256;
+            let distributable = amount - fee;
+            
+            // Calculate income per share
+            let income_per_share = distributable / total_shares;
+            
+            // Update tracking
+            self.total_rental_income.write(property_id, self.total_rental_income.read(property_id) + amount);
+            self.rental_income_per_share.write(property_id, 
+                self.rental_income_per_share.read(property_id) + income_per_share);
+            
+            // Emit event
+            self.emit(RentalIncomeDistributed {
+                property_id,
+                amount: distributable,
+                timestamp: get_block_timestamp()
+            });
+      }
+
         fn execute_proposal(ref self: ContractState, proposal_id: u256) {
             let mut proposal = self.proposals.read(proposal_id);
 
@@ -299,5 +328,4 @@ mod RealEstateFractionalOwnership {
         fn get_proposal_details(self: @ContractState, proposal_id: u256) -> Proposal {
             self.proposals.read(proposal_id)
         }
-    }
 }
