@@ -139,7 +139,7 @@ mod RealEstateFractionalOwnership {
         self.proposal_count.write(0);  
     }
 
-    #[external(v0)]
+    #[abi(embed_v0)]
     impl RealEstateFractionalOwnershipImpl of IRealEstateFractionalOwnership<ContractState> {
         fn create_proposal(
             ref self: ContractState, 

@@ -1,6 +1,6 @@
 
 #[derive(Drop, Serde)]
-struct Propertydetails {
+struct PropertyDetails {
     property_id: u256,
     property_address: felt252,
     property_description: felt252,
