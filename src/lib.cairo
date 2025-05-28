@@ -1,5 +1,6 @@
 pub mod interfaces {
     pub mod irealestate;
+    pub mod ipreciousmetal;
 }
 
 pub mod contracts {
