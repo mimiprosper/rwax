@@ -1,0 +1,25 @@
+name: Scarb CI
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  scarb-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Scarb
+        uses: software-mansion/setup-scarb@v1
+
+      - name: Build with Scarb
+        run: scarb build
+
+      - name: Check formatting with Scarb
+        run: scarb fmt --check
+
+      - name: Run tests with Scarb
+        run: scarb test
