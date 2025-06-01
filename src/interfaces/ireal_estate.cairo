@@ -1,4 +1,4 @@
-use rwax::structs::property_details::PropertyDetails;
+use rwax::structs::property::PropertyDetails;
 use rwax::structs::proporsal::Proposal;
 use starknet::ContractAddress;
 
