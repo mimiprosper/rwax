@@ -1,6 +1,6 @@
 pub mod interfaces {
-    pub mod irealestate;
     pub mod ipreciousmetal;
+    pub mod irealestate;
 }
 
 pub mod contracts {
@@ -8,5 +8,6 @@ pub mod contracts {
 }
 
 pub mod structs {
-    pub mod propertydetails;
+    pub mod property_details;
+    pub mod proporsal;
 }
