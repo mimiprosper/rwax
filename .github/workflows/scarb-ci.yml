@@ -4,22 +4,47 @@ on:
   push:
     branches:
       - '**'
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  scarb-checks:
+  build:
+    name: Scarb Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
       - name: Set up Scarb
         uses: software-mansion/setup-scarb@v1
-
       - name: Build with Scarb
         run: scarb build
 
+  fmt:
+    name: Scarb Fmt Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Scarb
+        uses: software-mansion/setup-scarb@v1
       - name: Check formatting with Scarb
         run: scarb fmt --check
 
+  test:
+    name: Scarb Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Scarb
+        uses: software-mansion/setup-scarb@v1
+      - name: Install snforge
+        run: |
+          curl -L https://raw.githubusercontent.com/foundry-rs/starknet-foundry/master/scripts/install.sh | bash
+          source $HOME/.bashrc
+          snfoundryup --version 0.44.0
       - name: Run tests with Scarb
-        run: scarb test
+        run: |
+          source $HOME/.bashrc
+          scarb test

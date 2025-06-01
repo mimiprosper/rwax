@@ -3,17 +3,13 @@ mod RealEstateFractionalOwnership {
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc1155::{ERC1155Component, ERC1155HooksEmptyImpl};
-    use rwax::events::{
-        property::{PropertyAdded, PropertyListed, PropertySold},
-        proporsal::{ProposalCreated, ProposalExecuted},
-        rental::{RentalIncomeClaimed, RentalIncomeDistributed},
-        vote::VoteCast,
-    };
+    use rwax::events::property::{PropertyAdded, PropertyListed, PropertySold};
+    use rwax::events::proporsal::{ProposalCreated, ProposalExecuted};
+    use rwax::events::rental::{RentalIncomeClaimed, RentalIncomeDistributed};
+    use rwax::events::vote::VoteCast;
     use rwax::interfaces::ireal_estate::IRealEstateFractionalOwnership;
-    use rwax::structs::{
-        property::PropertyDetails,
-        proporsal::Proposal,
-    };
+    use rwax::structs::property::PropertyDetails;
+    use rwax::structs::proporsal::Proposal;
     use starknet::storage::{
         Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
         StoragePointerWriteAccess,
