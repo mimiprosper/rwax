@@ -1,13 +1,20 @@
 pub mod interfaces {
-    pub mod ipreciousmetal;
-    pub mod irealestate;
+    pub mod iprecious_metal;
+    pub mod ireal_estate;
 }
 
 pub mod contracts {
-    pub mod realestate;
+    pub mod real_estate;
+}
+
+pub mod events {
+    pub mod property;
+    pub mod proporsal;
+    pub mod rental;
+    pub mod vote;
 }
 
 pub mod structs {
-    pub mod property_details;
+    pub mod property;
     pub mod proporsal;
 }

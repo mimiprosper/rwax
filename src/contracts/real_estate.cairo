@@ -3,9 +3,17 @@ mod RealEstateFractionalOwnership {
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc1155::{ERC1155Component, ERC1155HooksEmptyImpl};
-    use rwax::interfaces::irealestate::IRealEstateFractionalOwnership;
-    use rwax::structs::property_details::PropertyDetails;
-    use rwax::structs::proporsal::Proposal;
+    use rwax::events::{
+        property::{PropertyAdded, PropertyListed, PropertySold},
+        proporsal::{ProposalCreated, ProposalExecuted},
+        rental::{RentalIncomeClaimed, RentalIncomeDistributed},
+        vote::VoteCast,
+    };
+    use rwax::interfaces::ireal_estate::IRealEstateFractionalOwnership;
+    use rwax::structs::{
+        property::PropertyDetails,
+        proporsal::Proposal,
+    };
     use starknet::storage::{
         Map, StorageMapReadAccess, StorageMapWriteAccess, StoragePointerReadAccess,
         StoragePointerWriteAccess,
@@ -72,62 +80,6 @@ mod RealEstateFractionalOwnership {
         ProposalExecuted: ProposalExecuted,
         PropertyListed: PropertyListed,
         PropertySold: PropertySold,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct PropertyAdded {
-        property_id: u256,
-        property_address: felt252,
-        total_shares: u256,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct RentalIncomeDistributed {
-        property_id: u256,
-        amount: u256,
-        timestamp: u64,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct RentalIncomeClaimed {
-        property_id: u256,
-        owner: ContractAddress,
-        amount: u256,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct ProposalCreated {
-        proposal_id: u256,
-        property_id: u256,
-        creator: ContractAddress,
-        description: felt252,
-        voting_end_time: u64,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct VoteCast {
-        proposal_id: u256,
-        voter: ContractAddress,
-        supports: bool,
-        voting_power: u256,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct ProposalExecuted {
-        proposal_id: u256,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct PropertyListed {
-        property_id: u256,
-        sale_price: u256,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct PropertySold {
-        property_id: u256,
-        buyer: ContractAddress,
-        sale_price: u256,
     }
 
     #[constructor]
