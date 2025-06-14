@@ -113,8 +113,53 @@ mod PreciousMetalsFractionalOwnership {
         self.proposal_count.write(0);
     }
 
-    // #[abi(embed_v0)]
-    // impl PreciousMetalsFractionalImpl of IPreciousMetalsFractional<ContractState> {
-        
-    // }
+    #[abi(embed_v0)]
+    // This error would go off when all the traits has been implemented.
+    impl PreciousMetalsFractionalImpl of IPreciousMetalsFractional<ContractState> {
+        // ========== Asset Management ==========
+        fn add_metal_asset(
+            ref self: ContractState,
+            // asset_id: u256,
+            metal_type: felt252,
+            purity: u8,
+            weight_grams: u256,
+            vault_location: felt252,
+            assay_report_uri: felt252,
+            total_shares: u256,
+            share_price: u256,
+            initial_owner: ContractAddress,
+            vault_operator: ContractAddress,
+        ) {
+            // Only contract owner can add assets
+            self.ownable.assert_only_owner();
+
+            let asset_id = self.asset_count.read();
+
+            // Create asset details
+            let details = MetalAssetDetails {
+                purity,
+                metal_type,
+                initial_owner,
+                vault_operator,
+                weight_grams,
+                total_shares,
+                share_price,
+            };
+
+            // Mint all shares to initial owner
+            // TODO: implement mint on erc1155
+            // self.erc1155._mint(initial_owner, asset_id, total_shares, array![].span());
+
+            // Store asset details and vault operator
+            self.asset_details.write(asset_id, details);
+            self.vault_operators.write(asset_id, vault_operator);
+
+            // Increment asset count
+            self.asset_count.write(asset_id + 1);
+
+            // Emit event
+            self.asset_details.write(asset_id, details);
+             self.emit(AssetAdded { asset_id, metal_type, weight_grams, total_shares});
+        }
+    }
 }
