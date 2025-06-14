@@ -5,6 +5,7 @@ pub mod interfaces {
 
 pub mod contracts {
     pub mod real_estate;
+    pub mod precious_metal;
 }
 
 pub mod events {
