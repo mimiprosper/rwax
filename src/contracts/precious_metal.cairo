@@ -180,5 +180,38 @@ mod PreciousMetalsFractionalOwnership {
             self.asset_details.write(asset_id, details);
             self.emit(PriceUpdated { asset_id, new_price});
         }
+
+        fn request_physical_redemption(
+            ref self: ContractState, 
+            asset_id: u256, 
+            grams_to_redeem: u256,
+            shipping_address: felt252,
+        ) {
+            let caller = get_caller_address();
+            let details = self.asset_details.read(asset_id);
+
+            // Calculate shares needed for redemption
+            let shares_to_burn = (grams_to_redeem * details.total_shares) / details.weight_grams;
+            let balance = self.erc1155.balance_of(caller, asset_id);
+
+            assert(balance >= shares_to_burn, 'Insufficient shares');
+            assert(grams_to_redeem > 0, 'Zero amount');
+
+            // Record redemption request
+            self.redemption_requests.write((asset_id, caller), grams_to_redeem);
+
+            // In real implementation: 
+            // 1. Burn shares
+            // 2. Initiate physical delivery process
+            // self.erc1155._burn(caller, asset_id, shares_to_burn);
+
+            self.emit(
+                PhysicalRedemptionRequested {
+                    asset_id,
+                    grams_to_redeem,
+                    shipping_address,
+                },
+            );
+        }
     }
 }
