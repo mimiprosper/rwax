@@ -161,5 +161,10 @@ mod PreciousMetalsFractionalOwnership {
             self.asset_details.write(asset_id, details);
              self.emit(AssetAdded { asset_id, metal_type, weight_grams, total_shares});
         }
+
+        fn get_asset_details(self: @ContractState, asset_id: u256) -> MetalAssetDetails {
+            self.asset_details.read(asset_id)
+        }
+        
     }
 }
