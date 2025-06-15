@@ -170,5 +170,15 @@ mod PreciousMetalsFractionalOwnership {
             self.vault_operators.read(asset_id)
         }
         
+        // ========== Price & Redemption ==========
+        fn update_spot_price(ref self: ContractState, asset_id: u256, new_price: u256) {
+            // Only vault operator or oracle can update price
+            let operator = self.vault_operators.read(asset_id);
+            assert(get_caller_address() == operator, 'Only vault operator');
+
+            let mut details = self.asset_details.read(asset_id);
+            self.asset_details.write(asset_id, details);
+            self.emit(PriceUpdated { asset_id, new_price});
+        }
     }
 }
