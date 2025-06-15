@@ -165,6 +165,10 @@ mod PreciousMetalsFractionalOwnership {
         fn get_asset_details(self: @ContractState, asset_id: u256) -> MetalAssetDetails {
             self.asset_details.read(asset_id)
         }
+
+        fn get_vault_operator(self: @ContractState, asset_id: u256) -> ContractAddress {
+            self.vault_operators.read(asset_id)
+        }
         
     }
 }
