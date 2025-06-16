@@ -213,5 +213,32 @@ mod PreciousMetalsFractionalOwnership {
                 },
             );
         }
+
+        // ========== Revenue Distribution ==========
+        fn distribute_storage_fee_refund(ref self: ContractState, asset_id: u256, amount: u256) {
+            // Only vault operator can distribute refunds
+            let operator = self.vault_operators.read(asset_id);
+            assert(get_caller_address() == operator, 'Only vault operator');
+
+            let details = self.asset_details.read(asset_id);
+            let total_shares = details.total_shares;
+            let refund_per_share = amount / total_shares;
+
+            // Update tracking
+            self.total_revenue.write(asset_id, self.total_revenue.read(asset_id) + amount);
+            self.revenue_per_share.write(
+                asset_id, self.revenue_per_share.read(asset_id) + refund_per_share,
+            );
+
+            self.emit(
+                StorageFeeRefundDistributed {
+                    asset_id, 
+                    amount, 
+                },
+            );
+        }
+
+
+
     }
 }
