@@ -238,6 +238,12 @@ mod PreciousMetalsFractionalOwnership {
             );
         }
 
+        // fn claim_metal_revenue
+
+
+        // ========== Governance ==========
+
+
 
 
     }
