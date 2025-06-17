@@ -269,9 +269,6 @@ mod PreciousMetalsFractionalOwnership {
                 value,
                 recipient,
                 voting_end_time,
-                // executed,
-                // votes_for,
-                // votes_against,
             };
 
             // Store proposal
