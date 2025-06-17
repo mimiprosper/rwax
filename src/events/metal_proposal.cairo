@@ -4,7 +4,7 @@ use starknet::ContractAddress;
 pub struct MetalProposalCreated {
     pub proposal_id: u256,
     pub asset_id: u256,
-    pub creator: ContractAddress, 
+    // pub creator: ContractAddress, 
     pub description: felt252, 
     pub voting_end_time: u64,
 }
