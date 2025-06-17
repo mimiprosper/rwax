@@ -287,6 +287,5 @@ mod PreciousMetalsFractionalOwnership {
         }
 
         
-
     }
 }
