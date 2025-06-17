@@ -238,7 +238,58 @@ mod PreciousMetalsFractionalOwnership {
             );
         }
 
+        // fn claim_metal_revenue 
 
+        // ========== Governance ==========
+        fn create_metal_proposal(
+            ref self: ContractState,
+            asset_id: u256,
+            description: felt252,
+            value: u256,
+            recipient: ContractAddress,
+            voting_period: u64,
+            
+        ) {
+            // Only vault operator or significant shareholders can create proposals
+            let caller = get_caller_address();
+            let operator = self.vault_operators.read(asset_id);
+            let balance = self.erc1155.balance_of(caller, asset_id);
+            let details = self.asset_details.read(asset_id);
+
+            assert(
+                caller == operator || balance > details.total_shares / 10_u256,
+                'Not authorized to propose',
+            );
+
+            let proposal_id = self.proposal_count.read();
+            let voting_end_time = get_block_timestamp() + voting_period;
+
+            let proposal = MetalProposal {
+                description,
+                value,
+                recipient,
+                voting_end_time,
+                // executed,
+                // votes_for,
+                // votes_against,
+            };
+
+            // Store proposal
+            self.proposals.write(proposal_id, proposal);
+            self.proposal_count.write(proposal_id + 1);
+
+            self.emit(
+                MetalProposalCreated {
+                    proposal_id, 
+                    asset_id, 
+                    // creator,
+                    description, 
+                    voting_end_time,
+                },
+            );
+        }
+
+        
 
     }
 }
